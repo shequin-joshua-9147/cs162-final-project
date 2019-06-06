@@ -57,10 +57,9 @@ def common_denominator(number_one, number_two, range_one, range_two):
     """
     if number_one % range_two == 0 and number_two % range_two == 0:
         return range_two
-    elif range_one == range_two:
+    if range_one == range_two:
         return range_one
-    else:
-        return common_denominator(number_one, number_two, range_one, range_two-1)
+    return common_denominator(number_one, number_two, range_one, range_two-1)
 
 
 class ImageO:
@@ -351,30 +350,28 @@ class ImageO:
             Return the numpy array of the image if returnable=True
         """
         number_of_blocks = common_denominator(len(self.infile), len(self.infile[0]), 2, 100)
-        block_height = len(self.infile)//number_of_blocks
-        block_width = int(len(self.infile[0])//number_of_blocks)
+        block_dimensions = (len(self.infile)//number_of_blocks,
+                            len(self.infile[0])//number_of_blocks)
         for block_row in range(number_of_blocks):
             for block in range(number_of_blocks):
-                block_reds = []  # stores all red values in a block
-                block_greens = []  # stores all green values in a block
-                block_blues = []  # stores all blue values in a block
-                for row in range((block_row * block_height),
-                                 (block_row * block_height) + block_height):
-                    for column in range((block * block_width),
-                                        (block * block_width) + block_width):
+                block_rgb = [[], [], []]
+                for row in range((block_row * block_dimensions[0]),
+                                 (block_row * block_dimensions[0]) + block_dimensions[0]):
+                    for column in range((block * block_dimensions[1]),
+                                        (block * block_dimensions[1]) + block_dimensions[1]):
                         # go through every pixel in the block and store the rgb values in their
                         # respective lists.
-                        block_reds.append(self.infile[row][column][0])
-                        block_greens.append(self.infile[row][column][1])
-                        block_blues.append(self.infile[row][column][2])
+                        block_rgb[0].append(self.infile[row][column][0])
+                        block_rgb[1].append(self.infile[row][column][1])
+                        block_rgb[2].append(self.infile[row][column][2])
                 # find the average of the values in our rgb lists
-                avg_of_red = sum(block_reds) // len(block_reds)
-                avg_of_green = sum(block_greens) // len(block_greens)
-                avg_of_blue = sum(block_blues) // len(block_blues)
-                for row in range((block_row * block_height),
-                                 (block_row * block_height) + block_height):
-                    for column in range((block * block_width),
-                                        (block * block_width) + block_width):
+                avg_of_red = sum(block_rgb[0]) // len(block_rgb[0])
+                avg_of_green = sum(block_rgb[1]) // len(block_rgb[1])
+                avg_of_blue = sum(block_rgb[2]) // len(block_rgb[2])
+                for row in range((block_row * block_dimensions[0]),
+                                 (block_row * block_dimensions[0]) + block_dimensions[0]):
+                    for column in range((block * block_dimensions[1]),
+                                        (block * block_dimensions[1]) + block_dimensions[1]):
                         # go through every pixel in the block and change its rgb values
                         self.infile[row][column][0] = avg_of_red
                         self.infile[row][column][1] = avg_of_green
